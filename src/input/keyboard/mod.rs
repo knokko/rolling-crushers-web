@@ -30,7 +30,7 @@ pub fn start(){
         app_instance.input_manager.key_store.set_released(event.key());
     }) as Box<dyn FnMut(_)>);
 
-    window.add_event_listener_with_callback("keydown", release.as_ref().unchecked_ref()).unwrap();
+    window.add_event_listener_with_callback("keyup", release.as_ref().unchecked_ref()).unwrap();
 
     release.forget();
 }

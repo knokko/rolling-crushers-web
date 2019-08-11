@@ -12,7 +12,7 @@ impl KeyStore {
     }
 
     fn set_key_state(&mut self, key_string: String, new_state: bool){
-        let maybe_key = get_key_code(key_string);
+        let maybe_key = get_key_code(key_string.clone());
         if maybe_key.is_some() {
             let key = maybe_key.unwrap();
             self.pressed_keys[key.index] = new_state;
@@ -51,7 +51,7 @@ const AMOUNT: usize = 2;
 
 fn get_key_code(key: String) -> Option<Key> {
     println!("Asked for code of key {}", key);
-    if key == "Left" {
+    if key == "a" {
         return Some(KEY_LEFT);
     } else if key == "right" {
         return Some(KEY_RIGHT);

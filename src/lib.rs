@@ -5,11 +5,15 @@ mod render;
 
 #[wasm_bindgen]
 extern {
-    // Might need this later
+
+    #[wasm_bindgen(js_namespace = console)]
+    pub fn log(s: &str);
 }
 
 #[wasm_bindgen]
 pub fn start_wasm(){
+
+    std::panic::set_hook(Box::new(console_error_panic_hook::hook));
 
     let input_manager = input::create();
     let render_manager = render::create();
@@ -31,7 +35,7 @@ pub fn start_wasm(){
 pub struct Application {
 
     input_manager: input::InputManager,
-    render_manager: render::RenderManager
+    render_manager: render::RenderManager<'static>
 
 }
 
