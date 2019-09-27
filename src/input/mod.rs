@@ -16,12 +16,12 @@ pub fn start(){
 
 pub struct InputManager {
     
-    key_store: keyboard::KeyStore
+    key_store: KeyStore
 }
 
 impl InputManager {
 
-    pub fn get_key_store(&self) -> &keyboard::KeyStore {
+    pub fn get_key_store(&self) -> &KeyStore {
         &self.key_store
     }
 }

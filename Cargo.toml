@@ -11,8 +11,11 @@ crate-type = ["cdylib"]
 
 [dependencies]
 wasm-bindgen = "0.2"
-wasmuri-core = { git = "https://github.com/knokko/wasmuri-core" }
-wasmuri-text = { git = "https://github.com/knokko/wasmuri-text" }
+wasmuri-components = { path = "../../libraries/wasmuri/components" }
+wasmuri-container = { path = "../../libraries/wasmuri/container" }
+wasmuri-core = { path = "../../libraries/wasmuri/core" }
+wasmuri-text = { path = "../../libraries/wasmuri/text" }
+wasmuri-events = { path = "../../libraries/wasmuri/events" }
 console_error_panic_hook = "*"
 
 [dependencies.web-sys]

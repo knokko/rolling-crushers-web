@@ -1,12 +1,40 @@
-pub struct KeyStore {
+use std::cell::RefCell;
+use std::rc::Rc;
+use std::rc::Weak;
 
-    pressed_keys: Vec<bool>
+use wasmuri_events::*;
+
+pub struct KeyStore {
+    internal: Rc<RefCell<InternalKeyStore>>
 }
 
 impl KeyStore {
 
     pub fn create() -> KeyStore {
         KeyStore {
+            internal: Rc::new(RefCell::new(InternalKeyStore::create()))
+        }
+    }
+
+    pub(super) fn get_weak_ref(&self) -> Weak<RefCell<InternalKeyStore>> {
+        Rc::downgrade(&self.internal)
+    }
+
+    pub fn is_pressed(&self, key: Key) -> bool {
+        let internal = self.internal.borrow_mut();
+        internal.is_pressed(key)
+    }
+}
+
+pub(super) struct InternalKeyStore {
+
+    pressed_keys: Vec<bool>
+}
+
+impl InternalKeyStore {
+
+    fn create() -> InternalKeyStore {
+        InternalKeyStore {
             pressed_keys: vec![false; AMOUNT]
         }
     }
@@ -19,16 +47,30 @@ impl KeyStore {
         }
     }
 
-    pub fn set_pressed(&mut self, key_string: String){
+    fn set_pressed(&mut self, key_string: String){
         self.set_key_state(key_string, true);
     }
 
-    pub fn set_released(&mut self, key_string: String){
+    fn set_released(&mut self, key_string: String){
         self.set_key_state(key_string, false);
     }
 
     pub fn is_pressed(&self, key: Key) -> bool {
         self.pressed_keys[key.index]
+    }
+}
+
+impl Listener<KeyDownEvent> for InternalKeyStore {
+
+    fn process(&mut self, event: &KeyDownEvent){
+        self.set_pressed(event.key_event.key());
+    }
+}
+
+impl Listener<KeyUpEvent> for InternalKeyStore {
+
+    fn process(&mut self, event: &KeyUpEvent){
+        self.set_released(event.key_event.key());
     }
 }
 
