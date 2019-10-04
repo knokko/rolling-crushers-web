@@ -5,16 +5,22 @@ use wasm_bindgen::JsCast;
 use wasm_bindgen::prelude::*;
 
 use wasmuri_container::ContainerManager;
-use wasmuri_text::FontDetails;
+use wasmuri_text::{
+    Font,
+    FontDetails
+};
 
 use web_sys::{
     HtmlCanvasElement,
     window
 };
 
-mod input;
-
+pub mod input;
+pub mod progress;
+pub mod levels;
 pub mod menu;
+pub mod storage;
+pub mod collission;
 
 #[wasm_bindgen]
 pub fn start_wasm(){
@@ -26,10 +32,21 @@ pub fn start_wasm(){
     .expect("Element with id 'wasm-canvas' should be a canvas"), None);
 
     let input_manager = input::create();
+    let default_font;
+
+    {
+        let container_manager = container_manager_cell.borrow();
+
+        let mut text_renderer = container_manager.get_text_renderer().borrow_mut();
+        default_font = text_renderer.add_font(FontDetails::from_str("", "Arial"));
+    }
 
     let application = Application {
 
         container_manager: container_manager_cell,
+        fonts: Fonts {
+            default: default_font
+        },
         input_manager
     };
 
@@ -39,13 +56,9 @@ pub fn start_wasm(){
     }
 
     let application = get_instance();
-
     let mut container_manager = application.container_manager.borrow_mut();
-
-    let mut text_renderer = container_manager.get_text_renderer().borrow_mut();
-    let font = text_renderer.add_font(FontDetails::from_str("", "Arial"));
-    let main_menu = menu::main::create_main_menu(&font);
-    drop(text_renderer);
+    
+    let main_menu = menu::main::create_main_menu();
 
     container_manager.set_container_cell(main_menu);
 
@@ -55,7 +68,13 @@ pub fn start_wasm(){
 pub struct Application {
 
     container_manager: Rc<RefCell<ContainerManager>>,
+    fonts: Fonts,
     input_manager: input::InputManager
+}
+
+pub struct Fonts {
+
+    default: Rc<Font>
 }
 
 static mut INSTANCE: Option<Application> = None;
@@ -76,4 +95,9 @@ pub fn get_instance() -> &'static Application {
             None => panic!("Application instance has not yet been set")
         }
     }
+}
+
+pub fn get_default_font<'a>() -> &'a Rc<Font> {
+    let instance = get_instance();
+    &instance.fonts.default
 }
