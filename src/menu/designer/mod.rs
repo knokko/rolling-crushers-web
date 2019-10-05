@@ -23,6 +23,7 @@ use wasmuri_core::util::{
 const BACKGROUND_COLOR: Color = Color::from_rgb(30, 30, 150);
 const BUTTON_COLORS: TextColors = TextColors::create_simple_button(Color::from_rgb(50, 200, 150));
 const LABEL_COLORS: TextColors = TextColors::BLACK_LABEL;
+const EDIT_COLORS: TextColors = TextColors::new(Color::BLACK, Color::BLACK, Color::WHITE);
 
 pub fn create_designer_menu() -> Rc<RefCell<dyn Container>> {
     create_level_pack_overview()

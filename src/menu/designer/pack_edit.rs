@@ -9,11 +9,13 @@ use super::{
     BACKGROUND_COLOR,
     BUTTON_COLORS,
     LABEL_COLORS,
+    EDIT_COLORS,
     create_level_pack_overview
 };
 
 use wasmuri_components::button::text::TextButton;
 use wasmuri_components::passive::PassiveText;
+use wasmuri_components::input::text::TextEditField;
 use wasmuri_components::helper::render::text::{
     ButtonTextRenderHelper,
     SimpleTextRenderHelper
@@ -37,6 +39,7 @@ pub fn create_level_pack_creation() -> Rc<RefCell<dyn Container>> {
     layer.add_component(PassiveText::boxed(SimpleTextRenderHelper::boxed("Creating a new level pack...", font, Region::new(-0.5, 0.8, 0.5, 1.0), LABEL_COLORS)));
 
     layer.add_component(PassiveText::boxed(SimpleTextRenderHelper::boxed("Name: ", font, Region::new(-0.8, 0.0, -0.4, 0.2), LABEL_COLORS)));
+    layer.add_component(Box::new(TextEditField::new("Edit".to_string(), font, SimpleTextRenderHelper::boxed("Edit", font, Region::new(-0.4, 0.0, 0.4, 0.2), EDIT_COLORS))));
 
     layer.add_component(TextButton::boxed(ButtonTextRenderHelper::simple_boxed("Create", font, Region::new(-0.3, -0.8, 0.3, -0.6), BUTTON_COLORS),
         Box::new(|_, params| {
