@@ -6,6 +6,7 @@ use crate::storage::{
 };
 use crate::levels::LevelPack;
 use crate::menu::game::create_level_select;
+use crate::menu::designer::create_designer_menu;
 
 use std::rc::Rc;
 use std::cell::RefCell;
@@ -34,11 +35,17 @@ pub fn create_main_menu() -> Rc<RefCell<dyn Container>> {
     let mut layer = Layer::new(Some(BACKGROUND_COLOR));
     let font = get_default_font();
 
-    layer.add_component(Box::new(TextButton::new(
-        Box::new(ButtonTextRenderHelper::simple("Play", font, Region::new(-0.2, 0.6, 0.2, 0.8), BUTTON_COLORS)),
-        Box::new(move |_a, params| {
+    layer.add_component(TextButton::boxed(
+        ButtonTextRenderHelper::simple_boxed("Play", font, Region::new(-0.2, 0.6, 0.2, 0.8), BUTTON_COLORS),
+        Box::new(|_a, params| {
             params.agent.change_container(create_play_menu());
-    }))));
+    })));
+
+    layer.add_component(TextButton::boxed(
+        ButtonTextRenderHelper::simple_boxed("Level Designer", font, Region::new(-0.4, 0.3, 0.4, 0.5), BUTTON_COLORS),
+        Box::new(|_a, params| {
+            params.agent.change_container(create_designer_menu());
+    })));
 
     let container = FlatContainer::new(layer);
     Rc::new(RefCell::new(container))

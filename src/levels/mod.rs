@@ -7,6 +7,7 @@ pub use content::*;
 pub struct Level {
 
     index: usize,
+    name: String,
     required_points: u32,
 
     content: LevelContent
@@ -14,9 +15,10 @@ pub struct Level {
 
 impl Level {
 
-    pub fn new(index: usize, required_points: u32, content: LevelContent) -> Level {
+    pub fn new(index: usize, name: String, required_points: u32, content: LevelContent) -> Level {
         Level {
             index,
+            name,
             required_points,
             content
         }
@@ -24,6 +26,10 @@ impl Level {
 
     pub fn get_index(&self) -> usize {
         self.index
+    }
+
+    pub fn get_name(&self) -> &str {
+        &self.name
     }
 
     pub fn get_required_points(&self) -> u32 {
