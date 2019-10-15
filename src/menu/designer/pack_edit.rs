@@ -22,26 +22,41 @@ use wasmuri_container::{
     FlatContainer,
     layer::Layer
 };
-use wasmuri_core::util::Region;
+use wasmuri_core::util::*;
 
 pub fn create_level_pack_creation() -> Rc<RefCell<dyn Container>> {
     let mut layer = Layer::new(Some(BACKGROUND_COLOR));
     let font = get_default_font();
 
-    layer.add_component(TextButton::boxed(ButtonTextRenderHelper::simple_boxed("Cancel", font, button_location(Region::new(-0.9, 0.55, -0.3, 0.75)), BUTTON_COLORS),
+    layer.add_component(TextButton::celled(ButtonTextRenderHelper::simple_boxed("Cancel", font, button_location(Region::new(-0.9, 0.55, -0.3, 0.75)), BUTTON_COLORS),
         Box::new(|_, params| {
             params.agent.change_container(create_level_pack_overview());
     })));
 
-    layer.add_component(PassiveText::boxed(SimpleTextRenderHelper::boxed("Creating a new level pack...", font, label_location(Region::new(-0.5, 0.8, 0.5, 1.0), TextAlignment::Center), LABEL_COLORS)));
+    let info_component = PassiveText::celled(SimpleTextRenderHelper::boxed("Creating a new level pack...", font, label_location(Region::new(-0.5, 0.8, 0.5, 1.0), TextAlignment::Center), LABEL_COLORS));
+    let info_component_ref = Rc::clone(&info_component);
+    layer.add_component(info_component);
 
-    layer.add_component(PassiveText::boxed(SimpleTextRenderHelper::boxed("Name: ", font, label_location(Region::new(-0.8, 0.0, -0.4, 0.2), TextAlignment::RightCenter), LABEL_COLORS)));
-    layer.add_component(Box::new(TextEditField::new("Edit".to_string(), font, EditTextRenderHelper::simple_boxed("Edit", font, edit_location(Region::new(-0.4, 0.0, 0.4, 0.2)), EDIT_COLORS))));
+    layer.add_component(PassiveText::celled(SimpleTextRenderHelper::boxed("Name: ", font, label_location(Region::new(-0.8, 0.0, -0.4, 0.2), TextAlignment::RightCenter), LABEL_COLORS)));
+    
+    let name_field = Rc::new(RefCell::new(TextEditField::new("Edit".to_string(), font, EditTextRenderHelper::simple_boxed("Edit", font, edit_location(Region::new(-0.4, 0.0, 0.4, 0.2)), EDIT_COLORS))));
+    let name_field_ref = Rc::clone(&name_field);
+    layer.add_component(name_field);
 
-    layer.add_component(TextButton::boxed(ButtonTextRenderHelper::simple_boxed("Create", font, button_location(Region::new(-0.3, -0.8, 0.3, -0.6)), BUTTON_COLORS),
-        Box::new(|_, params| {
+    layer.add_component(TextButton::celled(ButtonTextRenderHelper::simple_boxed("Create", font, button_location(Region::new(-0.3, -0.8, 0.3, -0.6)), BUTTON_COLORS),
+        Box::new(move |_, params| {
             let existing_names = get_level_pack_names();
-            // TODO Read the name from the name text field, compare it with the existing names and then go ahead if the name wasn't in use
+            let name_field_borrow = name_field_ref.borrow();
+            let chosen_name = name_field_borrow.get_current_text();
+            for existing in existing_names {
+                if existing == chosen_name {
+                    let mut info_component_borrow = info_component_ref.borrow_mut();
+                    print("Name already exists");
+                    return;
+                }
+            }
+            let new_pack = LevelPackBuilder::new_empty();
+            params.agent.change_container(create_level_pack_edit(new_pack));
     })));
 
     Rc::new(RefCell::new(FlatContainer::new(layer)))
@@ -51,28 +66,28 @@ pub fn create_level_pack_edit(pack: LevelPackBuilder) -> Rc<RefCell<dyn Containe
     let mut layer = Layer::new(Some(BACKGROUND_COLOR));
     let font = get_default_font();
 
-    layer.add_component(TextButton::boxed(
+    layer.add_component(TextButton::celled(
         ButtonTextRenderHelper::simple_boxed("Save and quit", font, button_location(Region::new(-1.0, 0.7, -0.2, 0.9)), BUTTON_COLORS),
         Box::new(|_a, params| {
             // TODO Save
             params.agent.change_container(create_level_pack_overview());
     })));
-    layer.add_component(TextButton::boxed(
+    layer.add_component(TextButton::celled(
         ButtonTextRenderHelper::simple_boxed("Quit without saving", font, button_location(Region::new(-1.0, 0.45, -0.2, 0.65)), BUTTON_COLORS),
         Box::new(|_a, params| {
             params.agent.change_container(create_level_pack_overview());
     })));
 
-    layer.add_component(PassiveText::boxed(SimpleTextRenderHelper::boxed(&pack.name, font, label_location(Region::new(-0.2, 0.7, 0.6, 0.9), TextAlignment::Center), LABEL_COLORS)));
+    layer.add_component(PassiveText::celled(SimpleTextRenderHelper::boxed(&pack.name, font, label_location(Region::new(-0.2, 0.7, 0.6, 0.9), TextAlignment::Center), LABEL_COLORS)));
 
     for level in &pack.levels {
-        layer.add_component(TextButton::boxed(ButtonTextRenderHelper::simple_boxed(level.get_name(), font, button_location(Region::new(-1.0, -0.8, -0.2, -0.6)), BUTTON_COLORS), 
+        layer.add_component(TextButton::celled(ButtonTextRenderHelper::simple_boxed(level.get_name(), font, button_location(Region::new(-1.0, -0.8, -0.2, -0.6)), BUTTON_COLORS), 
         Box::new(|_, _params| {
             // TODO Edit the level
     })));
     }
 
-    layer.add_component(TextButton::boxed(ButtonTextRenderHelper::simple_boxed("Create new level", font, button_location(Region::new(-1.0, -0.8, -0.2, -0.6)), BUTTON_COLORS), 
+    layer.add_component(TextButton::celled(ButtonTextRenderHelper::simple_boxed("Create new level", font, button_location(Region::new(-1.0, -0.8, -0.2, -0.6)), BUTTON_COLORS), 
         Box::new(|_, _params| {
             // TODO Create a new level...
     })));

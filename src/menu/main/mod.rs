@@ -30,13 +30,13 @@ pub fn create_main_menu() -> Rc<RefCell<dyn Container>> {
     let mut layer = Layer::new(Some(BACKGROUND_COLOR));
     let font = get_default_font();
 
-    layer.add_component(TextButton::boxed(
+    layer.add_component(TextButton::celled(
         ButtonTextRenderHelper::simple_boxed("Play", font, button_location(Region::new(-0.2, 0.6, 0.2, 0.8)), BUTTON_COLORS),
         Box::new(|_a, params| {
             params.agent.change_container(create_play_menu());
     })));
 
-    layer.add_component(TextButton::boxed(
+    layer.add_component(TextButton::celled(
         ButtonTextRenderHelper::simple_boxed("Level Designer", font, button_location(Region::new(-0.4, 0.3, 0.4, 0.5)), BUTTON_COLORS),
         Box::new(|_a, params| {
             params.agent.change_container(create_designer_menu());
@@ -56,7 +56,7 @@ pub fn create_play_menu() -> Rc<RefCell<dyn Container>> {
         let mut layer = Layer::new(Some(BACKGROUND_COLOR));
         let font = get_default_font();
 
-        layer.add_component(TextButton::boxed(
+        layer.add_component(TextButton::celled(
             ButtonTextRenderHelper::simple_boxed("Back", font, button_location(Region::new(-0.9, 0.6, -0.4, 0.8)), 
             TextColors::create_simple_button(Color::from_rgb(200, 150, 0))),
             Box::new(|_a, params| {
@@ -66,7 +66,7 @@ pub fn create_play_menu() -> Rc<RefCell<dyn Container>> {
 
         let mut bottom_y = 0.7;
         for pack_name in pack_names {
-            layer.add_component(TextButton::boxed(ButtonTextRenderHelper::simple_boxed(&pack_name, font, button_location(Region::new(-0.3, bottom_y, 0.3, bottom_y + 0.2)), 
+            layer.add_component(TextButton::celled(ButtonTextRenderHelper::simple_boxed(&pack_name, font, button_location(Region::new(-0.3, bottom_y, 0.3, bottom_y + 0.2)), 
             TextColors::create_simple_button(Color::from_rgb(50, 50, 150))), Box::new(move |_, params| {
                 params.agent.change_container(create_level_select(get_pack(&pack_name), get_progress(&pack_name)));
             })));
