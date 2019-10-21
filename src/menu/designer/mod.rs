@@ -31,15 +31,15 @@ pub fn create_level_pack_overview() -> Rc<RefCell<dyn Container>> {
     let font = get_default_font();
 
     layer.add_component(TextButton::celled(
-        ButtonTextRenderHelper::simple_boxed("Back", font, button_location(Region::new(-1.0, 0.6, -0.6, 0.8)), BUTTON_COLORS),
-        Box::new(|_a, params| {
-            params.agent.change_container(create_main_menu());
+        ButtonTextRenderHelper::simple_celled("Back", font, button_location(Region::new(-1.0, 0.6, -0.6, 0.8)), BUTTON_COLORS),
+        Box::new(|agent, _, _| {
+            agent.change_container(create_main_menu());
     })));
 
     layer.add_component(TextButton::celled(
-        ButtonTextRenderHelper::simple_boxed("New level pack", font, button_location(Region::new(-1.0, -0.4, -0.4, -0.2)), BUTTON_COLORS),
-        Box::new(|_a, params| {
-            params.agent.change_container(create_level_pack_creation());
+        ButtonTextRenderHelper::simple_celled("New level pack", font, button_location(Region::new(-1.0, -0.4, -0.4, -0.2)), BUTTON_COLORS),
+        Box::new(|agent, _, _| {
+            agent.change_container(create_level_pack_creation());
     })));
 
     Rc::new(RefCell::new(FlatContainer::new(layer)))
