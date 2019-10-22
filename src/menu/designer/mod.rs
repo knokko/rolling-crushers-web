@@ -42,5 +42,5 @@ pub fn create_level_pack_overview() -> Rc<RefCell<dyn Container>> {
             agent.change_container(create_level_pack_creation());
     })));
 
-    Rc::new(RefCell::new(FlatContainer::new(layer)))
+    FlatContainer::celled(layer)
 }

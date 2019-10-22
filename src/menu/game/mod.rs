@@ -25,5 +25,5 @@ pub fn create_level_select(_levels: LevelPack, _progress: ProgressEntry) -> Rc<R
             agent.change_container(create_main_menu());
     })));
 
-    Rc::new(RefCell::new(FlatContainer::new(layer)))
+    FlatContainer::celled(layer)
 }

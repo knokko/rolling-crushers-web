@@ -31,9 +31,9 @@ pub struct LevelPackBuilder {
 
 impl LevelPackBuilder {
 
-    pub fn new_empty() -> LevelPackBuilder {
+    pub fn new_empty(name: &str) -> LevelPackBuilder {
         LevelPackBuilder {
-            name: "New level pack".to_string(),
+            name: name.to_string(),
             levels: Vec::new()
         }
     }

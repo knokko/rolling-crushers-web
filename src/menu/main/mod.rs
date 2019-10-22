@@ -73,6 +73,6 @@ pub fn create_play_menu() -> Rc<RefCell<dyn Container>> {
             bottom_y -= 0.25;
         }
 
-        Rc::new(RefCell::new(FlatContainer::new(layer)))
+        FlatContainer::celled(layer)
     }
 }

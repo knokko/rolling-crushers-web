@@ -55,11 +55,11 @@ pub fn create_level_pack_creation() -> Rc<RefCell<dyn Container>> {
                     return;
                 }
             }
-            let new_pack = LevelPackBuilder::new_empty();
+            let new_pack = LevelPackBuilder::new_empty(chosen_name);
             agent.change_container(create_level_pack_edit(new_pack));
     })));
 
-    Rc::new(RefCell::new(FlatContainer::new(layer)))
+    FlatContainer::celled(layer)
 }
 
 pub fn create_level_pack_edit(pack: LevelPackBuilder) -> Rc<RefCell<dyn Container>>{
@@ -92,5 +92,5 @@ pub fn create_level_pack_edit(pack: LevelPackBuilder) -> Rc<RefCell<dyn Containe
             // TODO Create a new level...
     })));
 
-    Rc::new(RefCell::new(FlatContainer::new(layer)))
+    FlatContainer::celled(layer)
 }
