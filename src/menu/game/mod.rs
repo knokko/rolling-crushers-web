@@ -7,7 +7,7 @@ use std::rc::Rc;
 use std::cell::RefCell;
 
 use wasmuri_components::button::text::TextButton;
-use wasmuri_components::helper::render::text::*;
+use wasmuri_components::behavior::render::*;
 use wasmuri_container::{
     Container,
     FlatContainer
@@ -20,7 +20,7 @@ pub fn create_level_select(_levels: LevelPack, _progress: ProgressEntry) -> Rc<R
     let mut layer = Layer::new(Some(Color::from_rgb(20, 50, 80)));
     let font = get_default_font();
 
-    layer.add_component(TextButton::celled(ButtonTextRenderHelper::simple_celled("Cancel", font, button_location(Region::new(-0.9, 0.7, -0.6, 0.9)), 
+    layer.add_component(TextButton::celled(ButtonTextRenderController::simple_tuple("Cancel", font, button_location(Region::new(-0.9, 0.7, -0.6, 0.9)), 
         TextColors::create_simple_button(Color::from_rgb(200, 100, 0))), Box::new(|agent, _, _| {
             agent.change_container(create_main_menu());
     })));

@@ -1,5 +1,7 @@
 mod pack_edit;
+mod level;
 pub use pack_edit::*;
+pub use level::*;
 
 use crate::get_default_font;
 use crate::menu::main::create_main_menu;
@@ -8,7 +10,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use wasmuri_components::button::text::TextButton;
-use wasmuri_components::helper::render::text::*;
+use wasmuri_components::behavior::render::*;
 use wasmuri_container::{
     Container,
     FlatContainer,
@@ -31,13 +33,13 @@ pub fn create_level_pack_overview() -> Rc<RefCell<dyn Container>> {
     let font = get_default_font();
 
     layer.add_component(TextButton::celled(
-        ButtonTextRenderHelper::simple_celled("Back", font, button_location(Region::new(-1.0, 0.6, -0.6, 0.8)), BUTTON_COLORS),
+        ButtonTextRenderController::simple_tuple("Back", font, button_location(Region::new(-1.0, 0.6, -0.6, 0.8)), BUTTON_COLORS),
         Box::new(|agent, _, _| {
             agent.change_container(create_main_menu());
     })));
 
     layer.add_component(TextButton::celled(
-        ButtonTextRenderHelper::simple_celled("New level pack", font, button_location(Region::new(-1.0, -0.4, -0.4, -0.2)), BUTTON_COLORS),
+        ButtonTextRenderController::simple_tuple("New level pack", font, button_location(Region::new(-1.0, -0.4, -0.4, -0.2)), BUTTON_COLORS),
         Box::new(|agent, _, _| {
             agent.change_container(create_level_pack_creation());
     })));
