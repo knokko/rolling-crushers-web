@@ -1,26 +1,29 @@
 mod pack;
 mod content;
+mod builder;
 
 pub use pack::*;
 pub use content::*;
+pub use builder::*;
 
+#[derive(Clone)]
 pub struct Level {
 
     index: usize,
     name: String,
     required_points: u32,
 
-    content: LevelContent
+    content_key: LevelContentKey
 }
 
 impl Level {
 
-    pub fn new(index: usize, name: String, required_points: u32, content: LevelContent) -> Level {
+    pub fn new(index: usize, name: String, required_points: u32, content_key: LevelContentKey) -> Level {
         Level {
             index,
             name,
             required_points,
-            content
+            content_key
         }
     }
 
@@ -36,7 +39,7 @@ impl Level {
         self.required_points
     }
 
-    pub fn get_content(&self) -> &LevelContent {
-        &self.content
+    pub fn load_content(&self) -> LevelContent {
+        panic!("Still need to implement this...")
     }
 }
