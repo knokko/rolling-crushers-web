@@ -31,13 +31,13 @@ pub fn create_main_menu() -> Rc<RefCell<dyn Container>> {
     let font = get_default_font();
 
     layer.add_component(TextButton::celled(
-        ButtonTextRenderController::simple_tuple("Play", font, button_location(Region::new(-0.2, 0.6, 0.2, 0.8)), BUTTON_COLORS),
+        ButtonTextRenderController::simple_tuple("Play", font, button_location(Region::new(-2000, 6000, 2000, 8000)), BUTTON_COLORS),
         Box::new(|agent, _, _| {
             agent.change_container(create_play_menu());
     })));
 
     layer.add_component(TextButton::celled(
-        ButtonTextRenderController::simple_tuple("Level Designer", font, button_location(Region::new(-0.4, 0.3, 0.4, 0.5)), BUTTON_COLORS),
+        ButtonTextRenderController::simple_tuple("Level Designer", font, button_location(Region::new(-4000, 3000, 4000, 5000)), BUTTON_COLORS),
         Box::new(|agent, _, _| {
             agent.change_container(create_designer_menu());
     })));
@@ -57,20 +57,21 @@ pub fn create_play_menu() -> Rc<RefCell<dyn Container>> {
         let font = get_default_font();
 
         layer.add_component(TextButton::celled(
-            ButtonTextRenderController::simple_tuple("Back", font, button_location(Region::new(-0.9, 0.6, -0.4, 0.8)), 
+            ButtonTextRenderController::simple_tuple("Back", font, button_location(Region::new(-9000, 6000, -4000, 8000)), 
             TextColors::create_simple_button(Color::from_rgb(200, 150, 0))),
             Box::new(|agent, _, _| {
                 agent.change_container(create_main_menu());
             })
         ));
 
-        let mut bottom_y = 0.7;
+        // TODO Protect from overflow, maybe let Region use i32 instead of i16
+        let mut bottom_y = 7000;
         for pack_name in pack_names {
-            layer.add_component(TextButton::celled(ButtonTextRenderController::simple_tuple(&pack_name, font, button_location(Region::new(-0.3, bottom_y, 0.3, bottom_y + 0.2)), 
+            layer.add_component(TextButton::celled(ButtonTextRenderController::simple_tuple(&pack_name, font, left_button_location(Region::new(-3000, bottom_y, 3000, bottom_y + 2000)), 
             TextColors::create_simple_button(Color::from_rgb(50, 50, 150))), Box::new(move |agent, _, _| {
                 agent.change_container(create_level_select(get_pack(&pack_name), get_progress(&pack_name)));
             })));
-            bottom_y -= 0.25;
+            bottom_y -= 2500;
         }
 
         FlatContainer::celled(layer)

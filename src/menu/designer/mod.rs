@@ -33,13 +33,13 @@ pub fn create_level_pack_overview() -> Rc<RefCell<dyn Container>> {
     let font = get_default_font();
 
     layer.add_component(TextButton::celled(
-        ButtonTextRenderController::simple_tuple("Back", font, button_location(Region::new(-1.0, 0.6, -0.6, 0.8)), BUTTON_COLORS),
+        ButtonTextRenderController::simple_tuple("Back", font, button_location(Region::new(-10_000, 6_000, -6_000, 8_000)), BUTTON_COLORS),
         Box::new(|agent, _, _| {
             agent.change_container(create_main_menu());
     })));
 
     layer.add_component(TextButton::celled(
-        ButtonTextRenderController::simple_tuple("New level pack", font, button_location(Region::new(-1.0, -0.4, -0.4, -0.2)), BUTTON_COLORS),
+        ButtonTextRenderController::simple_tuple("New level pack", font, button_location(Region::new(-10_000, -4_000, -4_000, -2_000)), BUTTON_COLORS),
         Box::new(|agent, _, _| {
             agent.change_container(create_level_pack_creation());
     })));

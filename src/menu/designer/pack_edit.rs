@@ -2,16 +2,12 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::get_default_font;
-use crate::levels::LevelPackBuilder;
+use crate::levels::*;
 use crate::storage::get_level_pack_names;
 
-use super::{
-    BACKGROUND_COLOR,
-    BUTTON_COLORS,
-    LABEL_COLORS,
-    EDIT_COLORS,
-    create_level_pack_overview
-};
+use super::level::create_level_edit;
+
+use super::*;
 
 use wasmuri_components::button::text::TextButton;
 use wasmuri_components::passive::PassiveText;
@@ -25,22 +21,22 @@ pub fn create_level_pack_creation() -> Rc<RefCell<dyn Container>> {
     let mut layer = Layer::new(Some(BACKGROUND_COLOR));
     let font = get_default_font();
 
-    layer.add_component(TextButton::celled(ButtonTextRenderController::simple_tuple("Cancel", font, button_location(Region::new(-0.9, 0.55, -0.3, 0.75)), BUTTON_COLORS),
+    let info_component_text = SimpleTextRenderController::celled("Creating a new level pack...", font, label_location(Region::new(-5000, 8000, 5000, 10_000), TextAlignment::Center), LABEL_COLORS);
+    let info_component_ref = Rc::clone(&info_component_text);
+    layer.add_component(PassiveText::celled((Rc::clone(&info_component_text) as Rc<RefCell<dyn ComponentBehavior>>, info_component_text)));
+
+    layer.add_component(TextButton::celled(ButtonTextRenderController::simple_tuple("Cancel", font, button_location(Region::new(-9000, 5500, -3000, 7500)), BUTTON_COLORS),
         Box::new(|agent, _, _| {
             agent.change_container(create_level_pack_overview());
     })));
 
-    let info_component_text = SimpleTextRenderController::celled("Creating a new level pack...", font, label_location(Region::new(-0.5, 0.8, 0.5, 1.0), TextAlignment::Center), LABEL_COLORS);
-    let info_component_ref = Rc::clone(&info_component_text);
-    layer.add_component(PassiveText::celled((Rc::clone(&info_component_text) as Rc<RefCell<dyn ComponentBehavior>>, info_component_text)));
-
-    layer.add_component(PassiveText::celled(SimpleTextRenderController::tuple("Name: ", font, label_location(Region::new(-0.8, 0.0, -0.4, 0.2), TextAlignment::RightCenter), LABEL_COLORS)));
+    layer.add_component(PassiveText::celled(SimpleTextRenderController::tuple("Name:", font, label_location(Region::new(-8000, 0, -4100, 2000), TextAlignment::RightCenter), LABEL_COLORS)));
     
-    let name_field = TextEditField::celled(EditTextRenderController::simple_tuple("", font, edit_location(Region::new(-0.4, 0.0, 0.4, 0.2)), EDIT_COLORS));
+    let name_field = TextEditField::celled(EditTextRenderController::simple_tuple("", font, edit_location(Region::new(-4000, 0, 4000, 2000)), EDIT_COLORS));
     let name_field_ref = Rc::clone(&name_field);
     layer.add_component(name_field);
 
-    layer.add_component(TextButton::celled(ButtonTextRenderController::simple_tuple("Create", font, button_location(Region::new(-0.3, -0.8, 0.3, -0.6)), BUTTON_COLORS),
+    layer.add_component(TextButton::celled(ButtonTextRenderController::simple_tuple("Create", font, button_location(Region::new(-3000, -8000, 3000, -6000)), BUTTON_COLORS),
         Box::new(move |agent, _, _| {
             let existing_names = get_level_pack_names();
             let name_field_borrow = name_field_ref.borrow();
@@ -63,31 +59,34 @@ pub fn create_level_pack_edit(pack: LevelPackBuilder) -> Rc<RefCell<dyn Containe
     let mut layer = Layer::new(Some(BACKGROUND_COLOR));
     let font = get_default_font();
 
+    layer.add_component(PassiveText::celled(SimpleTextRenderController::tuple(&pack.name, font, label_location(Region::new(-1500, 7000, 6000, 9000), TextAlignment::Center), LABEL_COLORS)));
+
     layer.add_component(TextButton::celled(
-        ButtonTextRenderController::simple_tuple("Save and quit", font, button_location(Region::new(-1.0, 0.7, -0.2, 0.9)), BUTTON_COLORS),
+        ButtonTextRenderController::simple_tuple("Save and quit", font, button_location(Region::new(-10_000, 7000, -2000, 9000)), BUTTON_COLORS),
         Box::new(|agent, _, _| {
             // TODO Save
             agent.change_container(create_level_pack_overview());
     })));
     layer.add_component(TextButton::celled(
-        ButtonTextRenderController::simple_tuple("Quit without saving", font, button_location(Region::new(-1.0, 0.45, -0.2, 0.65)), BUTTON_COLORS),
+        ButtonTextRenderController::simple_tuple("Quit without saving", font, button_location(Region::new(-10_000, 4500, -2000, 6500)), BUTTON_COLORS),
         Box::new(|agent, _, _| {
             agent.change_container(create_level_pack_overview());
     })));
+    layer.add_component(TextButton::celled(ButtonTextRenderController::simple_tuple("Create new level", font, button_location(Region::new(-10_000, -8000, -2000, -6000)), BUTTON_COLORS), 
+        Box::new(|agent, _, _| {
+            agent.change_container(create_level_edit(LevelBuilder::new_empty()));
+    })));
 
-    layer.add_component(PassiveText::celled(SimpleTextRenderController::tuple(&pack.name, font, label_location(Region::new(-0.2, 0.7, 0.6, 0.9), TextAlignment::Center), LABEL_COLORS)));
-
+    // TODO Maybe change type of Region properties from i16 to i32
+    let mut base_y = 4500;
     for level in &pack.levels {
-        layer.add_component(TextButton::celled(ButtonTextRenderController::simple_tuple(level.get_name(), font, button_location(Region::new(-1.0, -0.8, -0.2, -0.6)), BUTTON_COLORS), 
-        Box::new(|_agent, _, _| {
-            // TODO Edit the level
-    })));
+        let capture_level = level.clone();
+        layer.add_component(TextButton::celled(ButtonTextRenderController::simple_tuple(level.get_name(), font, left_button_location(Region::new(1000, base_y, 8000, base_y + 2000)), BUTTON_COLORS), 
+            Box::new(move |agent, _, _| {
+                agent.change_container(create_level_edit(LevelBuilder::from_level(capture_level.clone())));
+        })));
+        base_y -= 2500;
     }
-
-    layer.add_component(TextButton::celled(ButtonTextRenderController::simple_tuple("Create new level", font, button_location(Region::new(-1.0, -0.8, -0.2, -0.6)), BUTTON_COLORS), 
-        Box::new(|_agent, _, _| {
-            // TODO Create a new level...
-    })));
 
     FlatContainer::celled(layer)
 }
