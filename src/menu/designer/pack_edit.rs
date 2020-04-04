@@ -77,7 +77,6 @@ pub fn create_level_pack_edit(pack: LevelPackBuilder) -> Rc<RefCell<dyn Containe
             agent.change_container(create_level_edit(LevelBuilder::new_empty()));
     })));
 
-    // TODO Maybe change type of Region properties from i16 to i32
     let mut base_y = 4500;
     for level in &pack.levels {
         let capture_level = level.clone();

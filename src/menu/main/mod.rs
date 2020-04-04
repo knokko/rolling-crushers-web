@@ -64,7 +64,6 @@ pub fn create_play_menu() -> Rc<RefCell<dyn Container>> {
             })
         ));
 
-        // TODO Protect from overflow, maybe let Region use i32 instead of i16
         let mut bottom_y = 7000;
         for pack_name in pack_names {
             layer.add_component(TextButton::celled(ButtonTextRenderController::simple_tuple(&pack_name, font, left_button_location(Region::new(-3000, bottom_y, 3000, bottom_y + 2000)), 
